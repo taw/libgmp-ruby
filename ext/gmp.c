@@ -40,9 +40,9 @@ typedef __mpf_struct MP_FLOAT;
 #define mpz_make_struct_init(ruby_var,c_var) { mpz_make_struct(ruby_var,c_var); mpz_init(c_var); }
 #define mpq_make_struct_init(ruby_var,c_var) { mpq_make_struct(ruby_var,c_var); mpq_init(c_var); }
 #define mpf_make_struct_init(ruby_var,c_var,prec) { mpf_make_struct(ruby_var,c_var); mpf_init2(c_var,prec); }
-#define BIGNUM_P(value)        (TYPE(value) == T_BIGNUM)
-#define FLOAT_P(value)        (TYPE(value) == T_FLOAT)
-#define STRING_P(value)        (TYPE(value) == T_STRING)
+#define BIGNUM_P(value)      (TYPE(value) == T_BIGNUM)
+#define FLOAT_P(value)       (TYPE(value) == T_FLOAT)
+#define STRING_P(value)      (TYPE(value) == T_STRING)
 #define GMPZ_P(value)        (rb_obj_is_instance_of(value, cGMP_Z) == Qtrue)
 #define GMPQ_P(value)        (rb_obj_is_instance_of(value, cGMP_Q) == Qtrue)
 #define GMPF_P(value)        (rb_obj_is_instance_of(value, cGMP_F) == Qtrue)
@@ -85,9 +85,9 @@ typedef __mpf_struct MP_FLOAT;
 
 VALUE mGMP, cGMP_Z, cGMP_Q, cGMP_F;
 
-static void r_gmpz_free(void *ptr) { mpz_clear (ptr); free (ptr); }
-static void r_gmpq_free(void *ptr) { mpq_clear (ptr); free (ptr); }
-static void r_gmpf_free(void *ptr) { mpf_clear (ptr); free (ptr); }
+static void r_gmpz_free(void *ptr) { mpz_clear(ptr); free(ptr); }
+static void r_gmpq_free(void *ptr) { mpq_clear(ptr); free(ptr); }
+static void r_gmpf_free(void *ptr) { mpf_clear(ptr); free(ptr); }
 
 static VALUE r_gmpzsg_new(int argc, VALUE *argv, VALUE klass)
 {
@@ -96,7 +96,7 @@ static VALUE r_gmpzsg_new(int argc, VALUE *argv, VALUE klass)
 
     (void)klass;
 
-    if (argc > 1)
+    if(argc > 1)
         rb_raise(rb_eArgError, "wrong # of arguments(%d for 0 or 1)", argc);
 
     mpz_make_struct(res, res_val);
@@ -114,7 +114,7 @@ static VALUE r_gmpqsg_new(int argc, VALUE *argv, VALUE klass)
 
     (void)klass;
 
-    if (argc > 2)
+    if(argc > 2)
         rb_raise(rb_eArgError, "wrong # of arguments(%d for 0, 1 or 2)", argc);
 
     mpq_make_struct(res, res_val);
@@ -131,7 +131,7 @@ static VALUE r_gmpfsg_new(int argc, VALUE *argv, VALUE klass)
 
     (void)klass;
 
-    if (argc > 2)
+    if(argc > 2)
         rb_raise(rb_eArgError, "wrong # of arguments(%d for 0, 1 or 2)", argc);
 
     mpf_make_struct(res, res_val);
@@ -144,17 +144,17 @@ static void mpz_set_value(MP_INT *target, VALUE source)
 {
     MP_INT *source_val;
 
-    if (GMPZ_P(source)) {
+    if(GMPZ_P(source)) {
         mpz_get_struct(source, source_val);
-        mpz_set (target, source_val);
+        mpz_set(target, source_val);
     } else if (FIXNUM_P(source)) {
-        mpz_set_si (target, NUM2INT(source));
+        mpz_set_si(target, NUM2INT(source));
     } else if (STRING_P(source)) {
-        mpz_set_str (target, StringValuePtr(source), 0);
+        mpz_set_str(target, StringValuePtr(source), 0);
     } else if (BIGNUM_P(source)) {
         mpz_set_bignum(target, source);
     } else {
-        rb_raise (rb_eTypeError, "Don't know how to convert %s into GMP_Z", rb_class2name(rb_class_of(source)));
+        rb_raise(rb_eTypeError, "Don't know how to convert %s into GMP_Z", rb_class2name(rb_class_of(source)));
     }
 }
 
@@ -162,15 +162,15 @@ static VALUE r_gmpz_initialize(int argc, VALUE *argv, VALUE self)
 {
     MP_INT *self_val;
 
-    if (argc != 0)
+    if(argc != 0)
         {
             mpz_get_struct(self,self_val);
-            mpz_set_value (self_val, argv[0]);
+            mpz_set_value(self_val, argv[0]);
         }
     return Qnil;
 }
 
-static void mpq_str_set (MP_RAT *ROP, char *str)
+static void mpq_str_set(MP_RAT *ROP, char *str)
 {
     int i=0;
     
@@ -180,16 +180,16 @@ static void mpq_str_set (MP_RAT *ROP, char *str)
     if (str[i])
     {
         str[i] = 0; /* You didn't see that :) */
-        mpz_set_str (mpq_numref(ROP), str, 0);
+        mpz_set_str(mpq_numref(ROP), str, 0);
         str[i] = '/';
-        mpz_set_str (mpq_denref(ROP), str+i+1, 0);
+        mpz_set_str(mpq_denref(ROP), str+i+1, 0);
     }
     else
     {
-        mpz_set_str (mpq_numref(ROP), str, 0);
-        mpz_set_ui (mpq_denref(ROP), 1);
+        mpz_set_str(mpq_numref(ROP), str, 0);
+        mpz_set_ui(mpq_denref(ROP), 1);
     }
-    mpq_canonicalize (ROP);
+    mpq_canonicalize(ROP);
 }
 
 
@@ -197,18 +197,18 @@ static VALUE r_gmpq_initialize(int argc, VALUE *argv, VALUE self)
 {
     MP_RAT *self_val, *arg_val;
 
-    if (argc != 0) {
+    if(argc != 0) {
         mpq_get_struct(self, self_val);
-        if (argc == 1 && GMPQ_P(argv[0])) {
+        if(argc == 1 && GMPQ_P(argv[0])) {
             mpq_get_struct(argv[0], arg_val);
-            mpq_set (self_val, arg_val);
-        } else if (argc == 1 && STRING_P(argv[0])) {
-            mpq_str_set (self_val, StringValuePtr(argv[0]));
+            mpq_set(self_val, arg_val);
+        } else if(argc == 1 && STRING_P(argv[0])) {
+            mpq_str_set(self_val, StringValuePtr(argv[0]));
         } else {
-            mpz_set_value (mpq_numref(self_val), argv[0]);
-            if (argc == 2)
+            mpz_set_value(mpq_numref(self_val), argv[0]);
+            if(argc == 2)
                 {
-                mpz_set_value (mpq_denref(self_val), argv[1]);
+                mpz_set_value(mpq_denref(self_val), argv[1]);
                 mpq_canonicalize(self_val);
             }
         }
@@ -222,26 +222,26 @@ static void mpf_set_value(MP_FLOAT *self_val, VALUE arg)
     MP_RAT *arg_val_q;
     MP_INT *arg_val_z;
 
-     if (GMPQ_P(arg)) {
+     if(GMPQ_P(arg)) {
         mpq_get_struct(arg, arg_val_q);
         mpf_set_q(self_val, arg_val_q);
-    } else if (GMPZ_P(arg)) {
-        mpz_get_struct (arg, arg_val_z);
+    } else if(GMPZ_P(arg)) {
+        mpz_get_struct(arg, arg_val_z);
         mpf_set_z(self_val, arg_val_z);
-    } else if (FLOAT_P(arg)) {
+    } else if(FLOAT_P(arg)) {
         mpf_set_d(self_val, RFLOAT_VALUE(arg));
     } else if (FIXNUM_P(arg)) {
         mpf_set_si(self_val, FIX2INT(arg));
     } else if (STRING_P(arg)) {
-        if (mpf_set_str(self_val, StringValuePtr(arg), 10) == -1) {
-            rb_raise (rb_eRuntimeError, "Badly formatted string");
+        if(mpf_set_str(self_val, StringValuePtr(arg), 10) == -1) {
+            rb_raise(rb_eRuntimeError, "Badly formatted string");
         }
-    } else if (BIGNUM_P(arg)) {
+    } else if(BIGNUM_P(arg)) {
         mpz_temp_from_bignum(arg_val_z, arg);
         mpf_set_z(self_val, arg_val_z);
         mpz_temp_free(arg_val_z);
     } else {
-        rb_raise (rb_eTypeError, "Don't know how to convert %s into GMP::F", rb_class2name(rb_class_of(arg)));
+        rb_raise(rb_eTypeError, "Don't know how to convert %s into GMP::F", rb_class2name(rb_class_of(arg)));
     }
 }
 
@@ -253,7 +253,7 @@ static VALUE r_gmpf_initialize(int argc, VALUE *argv, VALUE self)
     
     mpf_get_struct(self, self_val);
     
-    if (argc==0) {
+    if(argc==0) {
         mpf_init(self_val);
         mpf_set_si(self_val, 0);
         return Qnil;
@@ -261,26 +261,26 @@ static VALUE r_gmpf_initialize(int argc, VALUE *argv, VALUE self)
 
     arg = argv[0];
 
-    if (argc == 2) {
-         if (FIXNUM_P(argv[1])) {
-              if (FIX2INT(argv[1]) >= 0)
+    if(argc == 2) {
+         if(FIXNUM_P(argv[1])) {
+              if(FIX2INT(argv[1]) >= 0)
                    prec = FIX2INT(argv[1]);
               else
                    rb_raise(rb_eRangeError, "prec must be non-negative");
          } else {
               rb_raise(rb_eTypeError, "prec must be FixNum");
          }
-    } else if (GMPF_P(arg)) {
-        mpf_get_struct (arg, arg_val_f);
-        prec = mpf_get_prec (arg_val_f);
+    } else if(GMPF_P(arg)) {
+        mpf_get_struct(arg, arg_val_f);
+        prec = mpf_get_prec(arg_val_f);
     }
-    if (prec == 0)
-        mpf_init (self_val);
+    if(prec == 0)
+        mpf_init(self_val);
     else
-        mpf_init2 (self_val, prec);
+        mpf_init2(self_val, prec);
 
-    if (GMPF_P(arg)) {
-        mpf_get_struct (arg, arg_val_f);
+    if(GMPF_P(arg)) {
+        mpf_get_struct(arg, arg_val_f);
         mpf_set(self_val, arg_val_f);
     } else {
         mpf_set_value(self_val, arg);
@@ -300,24 +300,23 @@ static VALUE r_gmpq_to_s(VALUE self)
 
     Data_Get_Struct(self, MP_RAT, self_val);
 
-    if (mpz_cmp_ui(mpq_denref(self_val), 1) == 0)
-        {
-                str = mpz_get_str(NULL, 10, mpq_numref (self_val));
-            res = rb_str_new2(str);
-            free (str);
-            return res;
-        }
+    if(mpz_cmp_ui(mpq_denref(self_val), 1) == 0) {
+      str = mpz_get_str(NULL, 10, mpq_numref (self_val));
+      res = rb_str_new2(str);
+      free (str);
+      return res;
+    }
     
     self_val_num = mpq_numref(self_val);
     self_val_den = mpq_denref(self_val);
 
-    sizeinbase = mpz_sizeinbase (self_val_num, 10) + mpz_sizeinbase (self_val_den, 10) + 3;
-    str = malloc (sizeinbase);
+    sizeinbase = mpz_sizeinbase(self_val_num, 10) + mpz_sizeinbase (self_val_den, 10) + 3;
+    str = malloc(sizeinbase);
 
-    mpz_get_str (str, 10, self_val_num);
-    offset = strlen (str);
+    mpz_get_str(str, 10, self_val_num);
+    offset = strlen(str);
     str[offset] = '/';
-    mpz_get_str (str + offset + 1, 10, self_val_den);
+    mpz_get_str(str + offset + 1, 10, self_val_den);
     res = rb_str_new2(str);
     free (str);
 
@@ -366,11 +365,11 @@ static VALUE r_gmpfsg_get_default_prec(VALUE klass)
 static VALUE r_gmpfsg_set_default_prec(VALUE klass, VALUE arg)
 {
     (void)klass;
-    if (FIXNUM_P(arg)) {
-        if (FIX2INT(arg) <= 0) {
+    if(FIXNUM_P(arg)) {
+        if(FIX2INT(arg) <= 0) {
             rb_raise(rb_eRangeError, "prec must be positive");
         }
-        mpf_set_default_prec (FIX2INT(arg));
+        mpf_set_default_prec(FIX2INT(arg));
     } else {
         rb_raise(rb_eTypeError, "prec must be FixNum");
     }
@@ -388,7 +387,7 @@ static VALUE r_gmpfsg_set_default_prec(VALUE klass, VALUE arg)
     rb_define_alias(rb_cBignum, old_fname, ruby_fname); \
     rb_define_method(rb_cBignum, ruby_fname, takeover_bignum_##fname, -1);
 
-void Init_gmp () {
+void Init_gmp() {
     mGMP = rb_define_module("GMP");
     rb_define_module_function(mGMP, "Z", r_gmpmod_z, -1);
     rb_define_module_function(mGMP, "Q", r_gmpmod_q, -1);
