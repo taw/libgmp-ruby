@@ -20,9 +20,9 @@ static VALUE r_gmpf_to_s(VALUE self)
         res = rb_str_new2(str);
     } else {
         if (str[0] == '-')
-            __gmp_asprintf (&str2, "-0.%se%+ld", str+1, exponent);
+            __gmp_asprintf(&str2, "-0.%se%+ld", str+1, exponent);
         else
-            __gmp_asprintf (&str2, "0.%se%+ld", str, exponent);
+            __gmp_asprintf(&str2, "0.%se%+ld", str, exponent);
         res = rb_str_new2(str2);
         free(str2);
     }
@@ -84,7 +84,7 @@ static VALUE r_gmpf_sub(VALUE self, VALUE arg)
     VALUE res;
     unsigned long prec;
 
-    mpf_get_struct_prec (self, self_val, prec);
+    mpf_get_struct_prec(self, self_val, prec);
 
     if (GMPF_P(arg)) {
         mpf_get_struct(arg, arg_val_f);
@@ -130,7 +130,7 @@ static VALUE r_gmpf_mul(VALUE self, VALUE arg)
     VALUE res;
     unsigned long prec;
 
-    mpf_get_struct_prec (self, self_val, prec);
+    mpf_get_struct_prec(self, self_val, prec);
 
     if (GMPF_P(arg)) {
         mpf_get_struct(arg, arg_val_f);
@@ -176,7 +176,7 @@ static VALUE r_gmpf_div(VALUE self, VALUE arg)
     VALUE res;
     unsigned long prec;
 
-    mpf_get_struct_prec (self, self_val, prec);
+    mpf_get_struct_prec(self, self_val, prec);
 
     if (GMPF_P(arg)) {
         mpf_get_struct(arg, arg_val_f);
@@ -246,11 +246,11 @@ int mpf_cmp_value(MP_FLOAT *self_val, VALUE arg)
 
     if (GMPF_P(arg)) {
          mpf_get_struct(arg,arg_val);
-         return mpf_cmp (self_val, arg_val);
+         return mpf_cmp(self_val, arg_val);
     } else {
-         mpf_temp_init(arg_val, mpf_get_prec (self_val));
-         mpf_set_value (arg_val, arg);
-         result = mpf_cmp (self_val, arg_val);
+         mpf_temp_init(arg_val, mpf_get_prec(self_val));
+         mpf_set_value(arg_val, arg);
+         result = mpf_cmp(self_val, arg_val);
          mpf_temp_free(arg_val);
          return result;
     }
@@ -264,13 +264,13 @@ VALUE r_gmpf_eq(VALUE self, VALUE arg)
     return (mpf_cmp_value(self_val, arg) == 0)?Qtrue:Qfalse;
 }
 
-VALUE r_gmpf_cmp (VALUE self, VALUE arg)
+VALUE r_gmpf_cmp(VALUE self, VALUE arg)
 {
     MP_FLOAT *self_val;
     int res;
     mpf_get_struct(self,self_val);
     res = mpf_cmp_value(self_val, arg);
-    if (res > 0)
+    if(res > 0)
         return INT2FIX(1);
     else if(res == 0)
         return INT2FIX(0);
@@ -428,7 +428,6 @@ static VALUE r_gmpfr_pow(VALUE self, VALUE arg)
         } else {
             typeerror(ZQFXBD);
         }
-
     }
 
     return res;

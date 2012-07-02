@@ -12,21 +12,21 @@ static VALUE r_gmpq_add(VALUE self, VALUE arg)
         mpq_add(res_val, self_val, arg_val_q);
     } else if(GMPZ_P(arg)) {
         res_val_num = mpq_numref(res_val);
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
         mpz_get_struct(arg, arg_val_z);
         mpz_mul(res_val_num, mpq_denref(self_val), arg_val_z);
         mpz_add(res_val_num, res_val_num, mpq_numref(self_val));
     } else if(FIXNUM_P(arg)) {
         res_val_num = mpq_numref(res_val);
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
         mpz_mul_si(res_val_num, mpq_denref(self_val), FIX2INT(arg));
         mpz_add(res_val_num, res_val_num, mpq_numref(self_val));
     } else if(GMPF_P(arg)) {
         return r_gmpf_add(arg,self);
     } else if(BIGNUM_P(arg)) {
         res_val_num = mpq_numref(res_val);
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
-        mpz_set_bignum (res_val_num, arg);
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set_bignum(res_val_num, arg);
         mpz_mul(res_val_num, res_val_num, mpq_denref(self_val));
         mpz_add(res_val_num, res_val_num, mpq_numref(self_val));
     } else {
@@ -51,14 +51,14 @@ static VALUE r_gmpq_sub(VALUE self, VALUE arg)
         mpq_sub (res_val, self_val, arg_val_q);
     } else if(GMPZ_P(arg)) {
         res_val_num = mpq_numref(res_val);
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
         mpz_get_struct(arg, arg_val_z);
         mpz_mul(res_val_num, mpq_denref(self_val), arg_val_z);
         mpz_neg(res_val_num, res_val_num);
         mpz_add(res_val_num, res_val_num, mpq_numref(self_val));
     } else if(FIXNUM_P(arg)) {
         res_val_num = mpq_numref(res_val);
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
         mpz_mul_si(res_val_num, mpq_denref(self_val), -FIX2INT(arg));
         mpz_add(res_val_num, res_val_num, mpq_numref(self_val));
     } else if(GMPF_P(arg)) {
@@ -68,8 +68,8 @@ static VALUE r_gmpq_sub(VALUE self, VALUE arg)
         mpf_sub (res_val_f, res_val_f, arg_val_f);
     } else if(BIGNUM_P(arg)) {
         res_val_num = mpq_numref(res_val);
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
-        mpz_set_bignum (res_val_num, arg);
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set_bignum(res_val_num, arg);
         mpz_mul(res_val_num, res_val_num, mpq_denref(self_val));
         mpz_neg(res_val_num, res_val_num);
         mpz_add(res_val_num, res_val_num, mpq_numref(self_val));
@@ -116,7 +116,7 @@ static VALUE r_gmpq_mul(VALUE self, VALUE arg)
         mpz_divexact_ui (mpq_denref(res_val), mpq_denref(self_val), tmp_ui);
         mpz_mul_ui (mpq_numref(res_val), mpq_numref(self_val), FIX2INT(arg)/tmp_ui);
 #else
-        mpz_set (mpq_denref(res_val), mpq_denref(self_val));
+        mpz_set(mpq_denref(res_val), mpq_denref(self_val));
         mpz_mul_si(mpq_numref(res_val), mpq_numref(self_val), FIX2INT(arg));
         mpq_canonicalize (res_val);
 #endif
@@ -215,7 +215,7 @@ static VALUE r_gmpq_abs(VALUE self)
     mpq_get_struct(self, self_val);
     mpq_make_struct_init(res, res_val);
     mpz_abs (mpq_numref(res_val), mpq_numref(self_val));
-    mpz_set (mpq_denref(res_val), mpq_denref(self_val));
+    mpz_set(mpq_denref(res_val), mpq_denref(self_val));
 
     return res;
 }
@@ -270,14 +270,14 @@ static int mpq_cmp_value (MP_RAT *OP, VALUE arg)
         return mpq_cmp(OP,arg_val_q);
     } else if(GMPZ_P(arg)) {
         mpz_get_struct(arg, arg_val_z);
-        mpz_temp_alloc (tmp_z);
+        mpz_temp_alloc(tmp_z);
         mpz_init(tmp_z);
         mpz_mul(tmp_z, mpq_denref(OP), arg_val_z);
         res = mpz_cmp(mpq_numref(OP),tmp_z);
         mpz_temp_free(tmp_z);
         return res;
     } else if(FIXNUM_P(arg)) {
-        mpz_temp_alloc (tmp_z);
+        mpz_temp_alloc(tmp_z);
         mpz_init(tmp_z);
         mpz_mul_si(tmp_z, mpq_denref(OP), FIX2INT(arg));
         res = mpz_cmp(mpq_numref(OP), tmp_z);
@@ -286,7 +286,7 @@ static int mpq_cmp_value (MP_RAT *OP, VALUE arg)
     } else if(GMPF_P(arg)) {
         not_yet;
     } else if(BIGNUM_P(arg)) {
-        mpz_temp_from_bignum (tmp_z, arg);
+        mpz_temp_from_bignum(tmp_z, arg);
         mpz_mul(tmp_z, tmp_z, mpq_denref(OP));
         res = mpz_cmp(mpq_numref(OP), tmp_z);
         mpz_temp_free(tmp_z);
@@ -438,25 +438,25 @@ static VALUE r_gmpq_cmpabs (VALUE self, VALUE arg)
         }
     } else if(GMPZ_P(arg)) {
         mpz_get_struct(arg, arg_val_z);
-        mpz_temp_alloc (tmp_z);
+        mpz_temp_alloc(tmp_z);
         mpz_init(tmp_z);
         mpz_mul(tmp_z, mpq_denref(self_val), arg_val_z);
-        res = mpz_cmpabs (mpq_numref(self_val),tmp_z);
+        res = mpz_cmpabs(mpq_numref(self_val),tmp_z);
         mpz_temp_free(tmp_z);
         return res;
     } else if(FIXNUM_P(arg)) {
-        mpz_temp_alloc (tmp_z);
+        mpz_temp_alloc(tmp_z);
         mpz_init(tmp_z);
         mpz_mul_si(tmp_z, mpq_denref(self_val), FIX2INT(arg));
-        res = mpz_cmpabs (mpq_numref(self_val), tmp_z);
+        res = mpz_cmpabs(mpq_numref(self_val), tmp_z);
         mpz_temp_free(tmp_z);
         return res;
     } else if(GMPF_P(arg)) {
         not_yet;
     } else if(BIGNUM_P(arg)) {
-        mpz_temp_from_bignum (tmp_z, arg);
+        mpz_temp_from_bignum(tmp_z, arg);
         mpz_mul(tmp_z, tmp_z, mpq_denref(self_val));
-        res = mpz_cmpabs (mpq_numref(self_val), tmp_z);
+        res = mpz_cmpabs(mpq_numref(self_val), tmp_z);
         mpz_temp_free(tmp_z);
         return res;
     } else {
@@ -471,7 +471,7 @@ static VALUE r_gmpq_num(VALUE self)
     VALUE res;
     mpq_get_struct(self,self_val);
     mpz_make_struct(res, res_val);
-    mpz_init_set (res_val, mpq_numref (self_val));
+    mpz_init_set(res_val, mpq_numref (self_val));
     return res;
 }
 
@@ -482,6 +482,6 @@ static VALUE r_gmpq_den(VALUE self)
     VALUE res;
     mpq_get_struct(self,self_val);
     mpz_make_struct(res, res_val);
-    mpz_init_set (res_val, mpq_denref (self_val));
+    mpz_init_set(res_val, mpq_denref (self_val));
     return res;
 }
