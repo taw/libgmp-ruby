@@ -10,3 +10,9 @@ Installation
     $ ruby extconf.rb
     $ make
     $ make install
+
+Alternatives
+============
+
+It seems that srawlins has been developing libgmp-ruby over the last few years.
+You probably want his version: https://github.com/srawlins/gmp/
