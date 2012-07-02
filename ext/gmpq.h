@@ -105,20 +105,20 @@ static VALUE r_gmpq_mul(VALUE self, VALUE arg)
     } else if(FIXNUM_P(arg)) {
 #if GMP >= 4
         if (FIX2INT(arg) > 0) {
-            tmp_ui = mpz_gcd_ui (0, mpq_denref(self_val), FIX2INT(arg));
+            tmp_ui = mpz_gcd_ui(0, mpq_denref(self_val), FIX2INT(arg));
         } else if(FIX2INT(arg) < 0) {
-            tmp_ui = mpz_gcd_ui (0, mpq_denref(self_val), -FIX2INT(arg));
+            tmp_ui = mpz_gcd_ui(0, mpq_denref(self_val), -FIX2INT(arg));
         } else {
             mpz_set_ui(mpq_numref(res_val), 0);
             mpz_set_ui(mpq_denref(res_val), 1);
             return res;
         }
-        mpz_divexact_ui (mpq_denref(res_val), mpq_denref(self_val), tmp_ui);
-        mpz_mul_ui (mpq_numref(res_val), mpq_numref(self_val), FIX2INT(arg)/tmp_ui);
+        mpz_divexact_ui(mpq_denref(res_val), mpq_denref(self_val), tmp_ui);
+        mpz_mul_ui(mpq_numref(res_val), mpq_numref(self_val), FIX2INT(arg)/tmp_ui);
 #else
         mpz_set(mpq_denref(res_val), mpq_denref(self_val));
         mpz_mul_si(mpq_numref(res_val), mpq_numref(self_val), FIX2INT(arg));
-        mpq_canonicalize (res_val);
+        mpq_canonicalize(res_val);
 #endif
     } else if(GMPF_P(arg)) {
         return r_gmpf_mul(arg, self);

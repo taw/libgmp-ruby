@@ -139,7 +139,7 @@ static VALUE r_gmpz_mul(VALUE self, VALUE arg)
         return r_gmpf_mul(arg, self);
     } else if(BIGNUM_P(arg)) {
         mpz_make_struct_init(res, res_val);
-        mpz_set_bignum (res_val, arg);
+        mpz_set_bignum(res_val, arg);
         mpz_mul(res_val, res_val, self_val);
     } else {
         typeerror(ZQFXB);
@@ -190,7 +190,7 @@ static VALUE r_gmpz_div(VALUE self, VALUE arg)
         mpf_div (res_val_f, res_val_f, arg_val_f);
     } else if(BIGNUM_P(arg)) {
         mpq_make_struct_init(res, res_val_q);
-        mpz_set_bignum (mpq_denref(res_val_q), arg);
+        mpz_set_bignum(mpq_denref(res_val_q), arg);
         if (mpz_cmp_ui(mpq_denref(res_val_q), 0) == 0)
             rb_raise (rb_eZeroDivError, "divided by 0");
         mpq_set_num (res_val_q, self_val);
@@ -291,19 +291,19 @@ static VALUE r_gmpz_powm(VALUE self, VALUE exp, VALUE mod)
 
     if (GMPZ_P(mod)) {
         mpz_get_struct(mod, mod_val);
-        if (mpz_sgn(mod_val) <= 0) {
+        if(mpz_sgn(mod_val) <= 0) {
             rb_raise (rb_eRangeError, "modulus must be positive");
         }
     } else if(FIXNUM_P(mod)) {
-        if (FIX2INT(mod) <= 0) {
+        if(FIX2INT(mod) <= 0) {
             rb_raise (rb_eRangeError, "modulus must be positive");
         }
-        mpz_temp_alloc (mod_val);
+        mpz_temp_alloc(mod_val);
         mpz_init_set_ui(mod_val, FIX2INT(mod));
         free_mod_val = 1;
     } else if(BIGNUM_P(mod)) {
         mpz_temp_from_bignum (mod_val, mod);
-        if (mpz_sgn(mod_val) <= 0) {
+        if(mpz_sgn(mod_val) <= 0) {
             mpz_temp_free(mod_val);
             rb_raise (rb_eRangeError, "modulus must be positive");
         }
@@ -314,9 +314,9 @@ static VALUE r_gmpz_powm(VALUE self, VALUE exp, VALUE mod)
     mpz_make_struct_init(res, res_val);
     mpz_get_struct(self, self_val);
 
-    if (GMPZ_P(exp)) {
+    if(GMPZ_P(exp)) {
         mpz_get_struct(exp, exp_val);
-        if (mpz_sgn(mod_val) < 0) {
+        if(mpz_sgn(mod_val) < 0) {
             rb_raise (rb_eRangeError, "exponent must be nonnegative");
         }
         mpz_powm (res_val, self_val, exp_val, mod_val);
@@ -330,14 +330,14 @@ static VALUE r_gmpz_powm(VALUE self, VALUE exp, VALUE mod)
         mpz_powm_ui (res_val, self_val, FIX2INT(exp), mod_val);
     } else if(BIGNUM_P(exp)) {
         mpz_temp_from_bignum (exp_val, exp);
-        mpz_powm (res_val, self_val, exp_val, mod_val);
-        mpz_temp_free (exp_val);
+        mpz_powm(res_val, self_val, exp_val, mod_val);
+        mpz_temp_free(exp_val);
     } else {
-        if (free_mod_val)
+        if(free_mod_val)
             mpz_temp_free(mod_val);
-        typeerror_as (ZXB, "exponent");
+        typeerror_as(ZXB, "exponent");
     }
-    if (free_mod_val)
+    if(free_mod_val)
         mpz_temp_free(mod_val);
     return res;
 }
@@ -400,12 +400,12 @@ static int mpz_cmp_value (MP_INT *OP, VALUE arg)
 
     if (GMPZ_P(arg)) {
         mpz_get_struct(arg,arg_val_z);
-        return mpz_cmp (OP,arg_val_z);
+        return mpz_cmp(OP,arg_val_z);
     } else if(FIXNUM_P(arg)) {
         return mpz_cmp_si (OP, FIX2INT(arg));
     } else if(GMPQ_P(arg)) {
         mpq_get_struct(arg,arg_val_q);
-        mpz_temp_alloc (arg_val_z);
+        mpz_temp_alloc(arg_val_z);
         mpz_init(arg_val_z);
         mpz_mul(arg_val_z, OP, mpq_denref(arg_val_q));
         res = mpz_cmp (arg_val_z, mpq_numref(arg_val_q));
@@ -431,17 +431,17 @@ static VALUE r_gmpz_eq(VALUE self, VALUE arg)
     mpz_get_struct(self, self_val);
     if (GMPZ_P(arg)) {
         mpz_get_struct(arg, arg_val_z);
-        return (mpz_cmp (self_val, arg_val_z)==0) ? Qtrue : Qfalse;
+        return (mpz_cmp(self_val, arg_val_z)==0) ? Qtrue : Qfalse;
     } else if(FIXNUM_P(arg)) {
-        return (mpz_cmp_si (self_val, FIX2INT(arg))==0) ? Qtrue : Qfalse;
+        return (mpz_cmp_si(self_val, FIX2INT(arg))==0) ? Qtrue : Qfalse;
     } else if(GMPQ_P(arg)) {
         mpq_get_struct(arg, arg_val_q);
         if (mpz_cmp_ui(mpq_denref(arg_val_q), 1)==0)
             return Qfalse;
-        return (mpz_cmp (self_val, mpq_numref(arg_val_q))==0) ? Qtrue : Qfalse;
+        return (mpz_cmp(self_val, mpq_numref(arg_val_q))==0) ? Qtrue : Qfalse;
     } else if(BIGNUM_P(arg)) {
         mpz_temp_from_bignum(arg_val_z, arg);
-        if (mpz_cmp (self_val, arg_val_z)==0) {
+        if (mpz_cmp(self_val, arg_val_z)==0) {
             mpz_temp_free(arg_val_z);
             return Qtrue;
         } else {
@@ -506,7 +506,7 @@ static VALUE r_gmpz_##fname(VALUE self, VALUE arg) \
             gmp_fname##_ui (res_val, self_val, -arg_val_i); \
         } \
     } else if(BIGNUM_P(arg)) { \
-        mpz_set_bignum (res_val, arg); \
+        mpz_set_bignum(res_val, arg); \
         if (mpz_cmp_ui(res_val, 0) == 0) \
             rb_raise (rb_eZeroDivError, "divided by 0"); \
         gmp_fname (res_val, self_val, res_val); \
@@ -594,8 +594,8 @@ static VALUE r_gmpz_##fname(VALUE self, VALUE arg) \
         mpz_fname (res_val, self_val, res_val); \
     } else if(BIGNUM_P(arg)) { \
         mpz_init (res_val); \
-        mpz_set_bignum (res_val, arg); \
-        mpz_fname (res_val, self_val, res_val); \
+        mpz_set_bignum(res_val, arg); \
+        mpz_fname(res_val, self_val, res_val); \
     } else  { \
         typeerror(ZXB); \
     } \
