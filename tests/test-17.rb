@@ -15,6 +15,6 @@ i=[a/b,b/a,a/c,c/a,a/d,d/a,a/2,2/a,a/e,e/a,a/4.51,4.51/a]
 
 [f,g,h,i].each { |var|
     var.each { |var2|
-	print var2, "(", var2.prec, " bits of precision)\n"
+        print var2, "(", var2.prec, " bits of precision)\n"
     }
 }
